@@ -15,6 +15,7 @@ Mathcraft is a PHP-powered launcher for Resent 5.1 and several Eaglercraft clien
 ```text
 mathcraft/
 ├── index.html              # Main launcher
+├── flamepvp.html           # Separate hacked-client launcher
 ├── style.css               # Launcher styling
 ├── resent5.php             # Resent 5.1 chunk loader
 ├── mod/                    # Resent 5.1 chunks
@@ -28,6 +29,8 @@ mathcraft/
 │   ├── astra/              # AstraClient chunks
 │   │   └── ...
 │   ├── official/           # Official client chunks
+│   │   └── ...
+│   ├── flamepvp/           # Downloaded FlamePVP client chunks
 │   │   └── ...
 │   └── pixel/              # PixelClient chunks
 │       └── ...
