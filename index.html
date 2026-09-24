@@ -5,12 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mathcraft</title>
     <link rel="stylesheet" href="style.css" />
+    <link id="page-favicon" rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%232f6df6'/%3E%3Cpath d='M18 16h28v7H26v9h17v7H26v9h20v7H18z' fill='white'/%3E%3C/svg%3E" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet" />
   </head>
 
   <body>
+    <div class="settings-control">
+      <button class="settings-toggle" id="settings-toggle" type="button" aria-label="Open appearance settings" aria-expanded="false" aria-controls="settings-menu">⚙</button>
+      <div class="settings-menu" id="settings-menu" hidden>
+        <div class="settings-heading">Tab appearance</div>
+        <button type="button" class="preset-button" data-title="Untitled Document - Google Docs" data-icon="docs">Untitled Document</button>
+        <button type="button" class="preset-button" data-title="Untitled spreadsheet - Google Sheets" data-icon="sheets">Untitled spreadsheet</button>
+        <button type="button" class="preset-button" data-title="Untitled presentation - Google Slides" data-icon="slides">Untitled presentation</button>
+        <button type="button" class="preset-button" data-title="Untitled - Notion" data-icon="notion">Untitled - Notion</button>
+        <button type="button" class="preset-button" data-title="Mathcraft" data-icon="mathcraft">Mathcraft</button>
+      </div>
+    </div>
     <main class="launcher">
       <h1 class="page-title">Mathcraft</h1>
       <div class="version-group">
@@ -52,5 +64,48 @@
       </div>
 
     </main>
+    <script>
+      const settingsToggle = document.getElementById('settings-toggle');
+      const settingsMenu = document.getElementById('settings-menu');
+      const favicon = document.getElementById('page-favicon');
+      const presets = {
+        docs: ['#4285f4', 'G'],
+        sheets: ['#0f9d58', 'S'],
+        slides: ['#f4b400', 'P'],
+        notion: ['#111111', 'N'],
+        mathcraft: ['#2f6df6', 'M']
+      };
+
+      function setTabAppearance(title, iconName) {
+        const [color, letter] = presets[iconName] || presets.mathcraft;
+        document.title = title;
+        favicon.href = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='${encodeURIComponent(color)}'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Arial' font-size='38' font-weight='700' fill='white'%3E${letter}%3C/text%3E%3C/svg%3E`;
+        localStorage.setItem('mathcraft-tab-appearance', JSON.stringify({ title, iconName }));
+      }
+
+      const savedAppearance = JSON.parse(localStorage.getItem('mathcraft-tab-appearance') || 'null');
+      if (savedAppearance) setTabAppearance(savedAppearance.title, savedAppearance.iconName);
+
+      settingsToggle.addEventListener('click', () => {
+        const isOpen = !settingsMenu.hidden;
+        settingsMenu.hidden = isOpen;
+        settingsToggle.setAttribute('aria-expanded', String(!isOpen));
+      });
+
+      document.querySelectorAll('.preset-button').forEach((button) => {
+        button.addEventListener('click', () => {
+          setTabAppearance(button.dataset.title, button.dataset.icon);
+          settingsMenu.hidden = true;
+          settingsToggle.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.settings-control')) {
+          settingsMenu.hidden = true;
+          settingsToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    </script>
   </body>
 </html>
