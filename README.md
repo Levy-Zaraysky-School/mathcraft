@@ -9,6 +9,7 @@ Mathcraft is a PHP-powered launcher for Resent 5.1 and several Eaglercraft clien
 - Resent 5.1 launcher
 - Chunks limited to 8 MB or less
 - No package installation or build step required
+- Browser-signature access requests with an admin approval panel
 
 ## Project Structure
 
@@ -55,6 +56,16 @@ php -S localhost:8000
 ```
 
 Then open `http://localhost:8000/` in a browser.
+
+Before uploading, generate a strong password hash and replace `AUTH_ADMIN_PASSWORD_HASH` in `auth-config.php`. Commit the hash, never the original password. Then open `/auth.php` for users or `/admin.php` for approvals. No environment variable is required:
+
+```bash
+php -r 'echo password_hash("your-private-password", PASSWORD_DEFAULT), PHP_EOL;'
+```
+
+Each request includes the user's name and browser user-agent along with the browser signature. The signature is a random value stored in local storage and hashed before it is sent to the server. It is a device label, not a secure identity: clearing browser storage or switching browsers creates a new request.
+
+The admin password is checked with `password_verify()`, so the repository contains only a bcrypt hash. Use HTTPS in production because the password is sent to the admin endpoint during login. Keep the original password out of GitHub and change the hash immediately if the password is exposed.
 
 For deployment, upload the project files to a PHP-enabled web host and open `index.html` through that host. Do not use a static-only server if you want the PHP loaders to launch the clients.
 
